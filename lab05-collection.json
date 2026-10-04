@@ -1,0 +1,379 @@
+{
+  "info": {
+    "_postman_id": "bce48082-d76f-471e-ba1c-d3fb0959dac8",
+    "name": "F.CSA313_LAB05",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58703060",
+    "_collection_link": "https://go.postman.co/collection/58703060-bce48082-d76f-471e-ba1c-d3fb0959dac8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Happy Path",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });\r\npm.test(\"Result is OK\", function () { pm.expect(pm.response.json().result).to.eql(\"OK\"); });\r\npm.test(\"Has registrationID\", function () { pm.expect(pm.response.json().registrationID).to.be.a(\"number\"); });"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S1', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'active', coursesTaken: ['CS201']})} }, function(err, res){});\r\npm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/courses/C1', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({prerequisites: ['CS201']})} }, function(err, res){});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S1\", \"courseID\": \"C1\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR_NO_STUDENT",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/courses/C2', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({prerequisites: []})} }, function(err, res){});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result NO_STUDENT\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_NO_STUDENT\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S_NOT_FOUND\", \"courseID\": \"C2\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR_INACTIVE_STUDENT",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S3', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'inactive', coursesTaken: []})} }, function(err, res){});\r\npm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/courses/C3', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({prerequisites: []})} }, function(err, res){});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result INACTIVE_STUDENT\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_INACTIVE_STUDENT\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S3\", \"courseID\": \"C3\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR_NO_COURSE",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result NO_COURSE\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_NO_COURSE\"); });"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S4', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'active', coursesTaken: []})} }, function(err, res){});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S4\", \"courseID\": \"C_NOT_FOUND\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR_PREREQUISITES",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S5', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'active', coursesTaken: []})} }, function(err, res){});\r\npm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/courses/C5', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({prerequisites: ['CS101']})} }, function(err, res){});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result PREREQUISITES\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_PREREQUISITES\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S5\", \"courseID\": \"C5\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Double Error (Inactive + No Course)",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S6', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'inactive', coursesTaken: []})} }, function(err, res){});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result INACTIVE_STUDENT\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_INACTIVE_STUDENT\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S6\", \"courseID\": \"C_NONE\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR_BAD_REQUEST",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 400\", function () { pm.response.to.have.status(400); });\r\npm.test(\"Result BAD_REQUEST\", function () { pm.expect(pm.response.json().result).to.eql(\"ERROR_BAD_REQUEST\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S7\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "No Prerequisites Course",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/students/S8', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({status: 'active', coursesTaken: []})} }, function(err, res){});\r\npm.sendRequest({ url: pm.variables.get(\"baseUrl\") + '/courses/C8', method: 'PUT', header: {'Content-Type': 'application/json'}, body: {mode: 'raw', raw: JSON.stringify({prerequisites: []})} }, function(err, res){});"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });\r\npm.test(\"Result is OK\", function () { pm.expect(pm.response.json().result).to.eql(\"OK\"); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"studentID\": \"S8\", \"courseID\": \"C8\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/registrations",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "registrations"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
