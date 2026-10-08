@@ -15,7 +15,7 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status is 201\", function () { pm.response.to.have.status(200); });\r\npm.test(\"Result is OK\", function () { pm.expect(pm.response.json().result).to.eql(\"OK\"); });\r\npm.test(\"Has registrationID\", function () { pm.expect(pm.response.json().registrationID).to.be.a(\"number\"); });"
+              "pm.test(\"Status is 201\", function () { pm.response.to.have.status(201); });\r\npm.test(\"Result is OK\", function () { pm.expect(pm.response.json().result).to.eql(\"OK\"); });\r\npm.test(\"Has registrationID\", function () { pm.expect(pm.response.json().registrationID).to.be.a(\"number\"); });"
             ]
           }
         },
@@ -374,6 +374,12 @@
         }
       },
       "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
     }
   ]
 }
