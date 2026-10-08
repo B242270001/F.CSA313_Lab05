@@ -374,6 +374,99 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "ERROR_PREREQUISITES_PARTIAL",
+      "item": [
+        {
+          "name": "Setup Student S9",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"active\",\n  \"coursesTaken\": [\"CS101\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/S9",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "students",
+                "S9"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Setup Course C9",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prerequisites\": [\"CS101\", \"CS102\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses/C9",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "C9"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register Partial Prerequisites",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Result is ERROR_PREREQUISITES\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData.result).to.eql(\"ERROR_PREREQUISITES\");\n});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentID\": \"S9\",\n  \"courseID\": \"C9\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registrations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registrations"
+              ]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
